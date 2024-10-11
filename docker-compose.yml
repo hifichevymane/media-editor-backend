@@ -1,0 +1,14 @@
+services:
+  app:
+    build:
+      context: .
+    container_name: express-ts
+    environment:
+      - NODE_ENV=development
+    env_file:
+      - .env
+    ports:
+      - '${PORT}:${PORT}'
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
