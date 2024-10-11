@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2020", // JavaScript version to compile down to
+    "module": "Preserve", // Module system for Node.js
+    "rootDir": "./src", // Source files directory
+    "outDir": "./dist", // Output directory for compiled files
+    "esModuleInterop": true, // Allows interop between ES modules and CommonJS
+    "strict": true, // Enable all strict type-checking options
+    "moduleResolution": "node", // Module resolution strategy
+    "skipLibCheck": true, // Skip type checking of declaration files
+    "forceConsistentCasingInFileNames": true, // Ensure consistent file naming case
+    // Treat files as modules even if it doesn't use import/export
+    "moduleDetection": "force",
+
+    // Allow JSON modules to be imported
+    "resolveJsonModule": true,
+
+    // Allow JS files to be imported from TS and vice versa
+    "allowJs": true,
+
+    // Disallow features that require cross-file awareness
+    "isolatedModules": true
+  },
+  "include": ["src/**/*"], // Files to include
+  "exclude": ["node_modules", "dist"] // Files to exclude
+}
