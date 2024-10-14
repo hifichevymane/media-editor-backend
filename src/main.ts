@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express, { Request, Response } from 'express';
+import cors from 'cors';
 import chalk from 'chalk';
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegPath from 'ffmpeg-static';
@@ -15,7 +16,16 @@ if (ffmpegPath) {
 }
 
 const PORT = process.env.PORT || 8000;
+const FRONTEND_URL = process.env.FRONTEND_URL || `http://localhost:5173`;
+
 const app = express();
+
+const corsOptions = {
+  origin: FRONTEND_URL,
+  optionsSuccessStatus: 200,
+}
+app.use(cors(corsOptions));
+
 app.use(logger);
 app.use('/audio', audioRouter);
 
