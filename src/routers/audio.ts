@@ -27,19 +27,19 @@ router.post('/crop-audio', upload.single('file'), (req: Request, res: Response) 
     .setDuration(endTime - startTime)
     .output(outputFilePath)
     .on('end', () => {
-      res.download(outputFilePath, (err) => {
+      res.download(outputFilePath, 'cropped-audio.mp3', (err) => {
         if (err) {
           console.error('Error during file download:', err);
           res
             .status(500)
             .json({ error: 'File download error' });
         }
-        // Optionally, remove the cropped file after download
-        fs.unlink(outputFilePath, (unlinkErr) => {
-          if (unlinkErr) {
-            console.error('Error deleting cropped file:', unlinkErr);
-          }
-        });
+      });
+      // Optionally, remove the cropped file after download
+      fs.unlink(inputFilePath, (unlinkErr) => {
+        if (unlinkErr) {
+          console.error('Error deleting cropped file:', unlinkErr);
+        }
       });
     })
     .on('error', (err) => {
