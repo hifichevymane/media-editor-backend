@@ -8,7 +8,47 @@ services:
     env_file:
       - .env
     ports:
-      - '${PORT}:${PORT}'
+      - '${APP_PORT}:${APP_PORT}'
+    depends_on:
+      - mongo
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
+
+  mongo:
+    image: mongo:latest
+    container_name: ${MONGO_CONTAINER_NAME}
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_DATABASE_NAME}
+    ports:
+      - '${MONGO_PORT}:${MONGO_PORT}'
+    volumes:
+      - database-data:/var/lib/mongodb/data
+
+  mongo-express:
+    image: mongo-express:1.0.2-20-alpine3.19
+    container_name: mongo-express
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=${MONGO_CONTAINER_NAME}
+      - ME_CONFIG_MONGODB_PORT=${MONGO_PORT}
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGO_ROOT_USERNAME}
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGO_ROOT_PASSWORD}
+      - ME_CONFIG_BASICAUTH_USERNAME=${MONGO_EXPRESS_USERNAME}
+      - ME_CONFIG_BASICAUTH_PASSWORD=${MONGO_EXPRESS_PASSWORD}
+      - ME_CONFIG_BASICAUTH=${MONGO_EXPRESS_BASICAUTH_ENABLE}
+    ports:
+      - '${MONGO_EXPRESS_PORT}:${MONGO_EXPRESS_PORT}'
+    depends_on:
+      - mongo
+
+volumes:
+  database-data:
