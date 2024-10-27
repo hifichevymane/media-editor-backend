@@ -7,8 +7,13 @@ const MONGO_CONTAINER_NAME = process.env.MONGO_CONTAINER_NAME;
 const MONGO_PORT = process.env.MONGO_PORT;
 const DATABASE_CONNECTION_URL = `mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@${MONGO_CONTAINER_NAME}:${MONGO_PORT}/`;
 
-const connectToDb = () => {
-  return mongoose.connect(DATABASE_CONNECTION_URL);
+const connectDatabase = async () => {
+  try {
+    await mongoose.connect(DATABASE_CONNECTION_URL);
+    console.log('Database connection is succeed!');
+  } catch (err) {
+    console.error(err);
+  }
 };
 
-export default connectToDb;
+export default connectDatabase;

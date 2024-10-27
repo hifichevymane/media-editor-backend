@@ -1,17 +1,17 @@
 import fs from 'fs';
 import path from 'path';
 import { Router } from "express";
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import ffmpeg from 'fluent-ffmpeg';
 
-import upload, { uploadDir } from '../upload';
+import upload, { uploadDir } from '../../upload';
 
-import CropAudioBody from '../interfaces/CropAudioBody';
+import CropAudioRequest from './CropAudioRequest';
 
 const router = Router();
 
-router.post('/crop-audio', upload.single('file'), (req: Request, res: Response) => {
-  const { start_time: startTime, end_time: endTime }: CropAudioBody = req.body;
+router.post('/crop-audio', upload.single('file'), (req: CropAudioRequest, res: Response) => {
+  const { start_time: startTime, end_time: endTime } = req.body;
   const inputFilePath = req.file?.path;
   const outputFilePath = path.join(uploadDir, `cropped-${req.file?.filename}`);
 
