@@ -4,11 +4,13 @@ import cors from 'cors';
 import chalk from 'chalk';
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegPath from 'ffmpeg-static';
+import bodyParser from 'body-parser';
 
 import logger from './logger';
-import connectToDb from './database';
+import connectDatabase from './database/connectDatabase';
 
-import audioRouter from './routers/audio';
+import audioRouter from './routers/audio/router';
+import authRouter from './routers/auth/router';
 
 if (ffmpegPath) {
   ffmpeg.setFfmpegPath(ffmpegPath);
@@ -28,16 +30,16 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use(logger);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
 app.use('/audio', audioRouter);
+app.use('/auth', authRouter);
 
 app.get('/', (req: Request, res: Response) => {
   res.json({ status: 200, message: 'the app works!' });
 });
 
-connectToDb()
-  .then(() => (console.log(chalk.green('Connection to the database was successful!'))))
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(chalk.green(`Server is running on port ${PORT}`));
-    });
-  });
+connectDatabase();
+app.listen(PORT, () => {
+  console.log(chalk.green(`Server is running on port ${PORT}`));
+});
