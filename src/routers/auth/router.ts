@@ -1,15 +1,21 @@
+import 'dotenv/config';
+
 import { Router } from "express";
 import mongoose from "mongoose";
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 import User from "../../database/schemas/User";
 
 import type { Response } from "express";
 import type SignUpRequest from "./SignUpRequest";
+import type LoginRequest from "./LoginRequest";
+
+const SECRET_KEY = process.env.SECRET_KEY || 'secret_key';
 
 const router = Router();
 
-router.post('/sign-up', async (req: SignUpRequest, res: Response): Promise<void> => {
+router.post('/sign-up', async (req: SignUpRequest, res: Response) => {
   const {
     username, email,
     password,
@@ -59,6 +65,47 @@ router.post('/sign-up', async (req: SignUpRequest, res: Response): Promise<void>
         message: 'The error happened'
       });
     }
+  }
+});
+
+router.post('/login', async (req: LoginRequest, res: Response) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    res.status(400).json({
+      message: 'email and password fields are required'
+    });
+  }
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      res.status(400).json({
+        message: 'user does not exist'
+      });
+      return;
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      res.status(400).json({
+        message: 'invalid credentials'
+      });
+      return;
+    }
+
+    const accessToken = jwt.sign(
+      { id: user.id },
+      SECRET_KEY,
+      { expiresIn: '1d' }
+    );
+
+    res.json({ access_token: accessToken });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: err
+    });
   }
 });
 
