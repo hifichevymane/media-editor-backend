@@ -4,12 +4,14 @@ import { Router } from "express";
 import mongoose from "mongoose";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import passport from 'passport';
 
 import User from "../../database/schemas/User";
 
-import type { Response } from "express";
+import type { Response, Request } from "express";
 import type SignUpRequest from "./SignUpRequest";
 import type LoginRequest from "./LoginRequest";
+import type LogoutParams from './LogoutParams';
 
 const SECRET_KEY = process.env.SECRET_KEY || 'secret_key';
 
@@ -108,5 +110,22 @@ router.post('/login', async (req: LoginRequest, res: Response) => {
     });
   }
 });
+
+router.delete(
+  '/users/:userId',
+  passport.authenticate('jwt', { session: false }),
+  async (req: Request<LogoutParams>, res: Response) => {
+    try {
+      const { userId: id } = req.params;
+      await User.deleteOne({ _id: id });
+      res.status(204).end();
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({
+        message: err
+      });
+    }
+  }
+);
 
 export default router;

@@ -13,12 +13,21 @@ const options: StrategyOptionsWithoutRequest = {
 
 const JwtStrategy = new Strategy(options, async (payload: any, done: VerifiedCallback) => {
   try {
-    const user = await User.findOne({ id: payload.sub });
+    const { exp } = payload;
+    const tokenExpDate = new Date(exp * 1000);
+    const currentDate = new Date();
+
+    if (tokenExpDate.getTime() <= currentDate.getTime()) {
+      return done(null, false, { message: 'The token has expired' })
+    }
+
+    const { id } = payload;
+    const user = await User.findById(id);
     if (user) {
       return done(null, user);
     }
 
-    return done(null, false);
+    return done(null, false, { message: 'Unauthorized' });
   } catch (err) {
     return done(err, false);
   }

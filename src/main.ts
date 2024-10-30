@@ -4,10 +4,11 @@ import cors from 'cors';
 import chalk from 'chalk';
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegPath from 'ffmpeg-static';
-import bodyParser from 'body-parser';
+import passport from 'passport';
 
 import logger from './logger';
 import connectDatabase from './database/connectDatabase';
+import JwtStrategy from './auth';
 
 import audioRouter from './routers/audio/router';
 import authRouter from './routers/auth/router';
@@ -30,8 +31,12 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use(logger);
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+passport.use(JwtStrategy);
+app.use(passport.initialize());
+
 app.use('/audio', audioRouter);
 app.use('/auth', authRouter);
 
