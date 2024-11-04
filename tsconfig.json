@@ -19,7 +19,8 @@
     "allowJs": true,
 
     // Disallow features that require cross-file awareness
-    "isolatedModules": true
+    "isolatedModules": true,
+    "types": ["./src/type_defs/express.d.ts"]
   },
   "include": ["src/**/*"], // Files to include
   "exclude": ["node_modules", "dist"] // Files to exclude

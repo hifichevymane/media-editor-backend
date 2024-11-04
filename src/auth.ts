@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import type { VerifiedCallback, StrategyOptionsWithoutRequest } from 'passport-jwt';
 
-import User from './database/schemas/User';
+import { User } from './database/schemas/User';
 
 const SECRET_KEY = process.env.SECRET_KEY || 'secret_key';
 

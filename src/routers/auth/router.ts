@@ -6,12 +6,12 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
 
-import User from "../../database/schemas/User";
+import { User } from "../../database/schemas/User";
 
 import type { Response, Request } from "express";
-import type SignUpRequest from "./SignUpRequest";
-import type LoginRequest from "./LoginRequest";
-import type LogoutParams from './LogoutParams';
+import type SignUpRequest from "./interfaces/SignUpRequest";
+import type LoginRequest from "./interfaces/LoginRequest";
+import type UpdateUserRequest from './interfaces/UpdateUserRequest';
 
 const SECRET_KEY = process.env.SECRET_KEY || 'secret_key';
 
@@ -114,7 +114,7 @@ router.post('/login', async (req: LoginRequest, res: Response) => {
 router.delete(
   '/users/:userId',
   passport.authenticate('jwt', { session: false }),
-  async (req: Request<LogoutParams>, res: Response) => {
+  async (req: Request, res: Response) => {
     try {
       const { userId: id } = req.params;
       await User.deleteOne({ _id: id });
@@ -123,6 +123,29 @@ router.delete(
       console.error(err);
       res.status(500).json({
         message: err
+      });
+    }
+  }
+);
+
+router.patch(
+  '/users/:userId',
+  passport.authenticate('jwt', { session: false }),
+  async (req: UpdateUserRequest, res: Response) => {
+    try {
+      const { username, email } = req.body;
+      const { userId: id } = req.params;
+
+      const updatedUser = await User.findByIdAndUpdate(
+        id,
+        { $set: { username, email } },
+        { new: true }
+      );
+      res.json(updatedUser);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({
+        message: 'Failed to update the record'
       });
     }
   }
