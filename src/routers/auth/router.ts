@@ -3,12 +3,24 @@ import 'dotenv/config';
 import { Router } from "express";
 import passport from 'passport';
 
-import { signUp, login, deleteUser, updateUser } from './controller';
+import {
+  signUp,
+  login,
+  deleteUser,
+  updateUser,
+  getCurrentUser
+} from './controller';
 
 const router = Router();
 
 router.post('/sign-up', signUp);
 router.post('/login', login);
+
+router.get(
+  '/users/current-user',
+  passport.authenticate('jwt', { session: false }),
+  getCurrentUser
+);
 router.delete(
   '/users/:userId',
   passport.authenticate('jwt', { session: false }),

@@ -136,3 +136,8 @@ export const updateUser = async (req: UpdateUserRequest, res: Response): Promise
     });
   }
 };
+
+export const getCurrentUser = async (req: Request, res: Response): Promise<void> => {
+  const { user } = req;
+  res.json(user);
+};
