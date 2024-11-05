@@ -12,6 +12,7 @@ import JwtStrategy from './auth';
 
 import audioRouter from './routers/audio/router';
 import authRouter from './routers/auth/router';
+import projectsRouter from './routers/projects/router';
 
 if (ffmpegPath) {
   ffmpeg.setFfmpegPath(ffmpegPath);
@@ -39,6 +40,7 @@ app.use(passport.initialize());
 
 app.use('/audio', audioRouter);
 app.use('/auth', authRouter);
+app.use('/projects', projectsRouter);
 
 app.get('/', (req: Request, res: Response) => {
   res.json({ status: 200, message: 'the app works!' });
