@@ -22,8 +22,8 @@ const ProjectSchema = new Schema<IProject>(
       type: String,
       required: false,
       unique: false,
-      minLength: 128,
-      maxLength: 512
+      minLength: 20,
+      maxLength: 128
     },
     startTimeSeconds: {
       type: Number,
